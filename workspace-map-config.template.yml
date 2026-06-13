@@ -1,0 +1,113 @@
+workspace:
+  root: "workspace"
+
+areas:
+  backend:
+    path: "workspace/backend"
+    agent: "backend"
+    runner: "java-runner"
+    task_markers:
+      - "backend"
+      - "api"
+      - "java"
+      - "spring"
+      - "database"
+      - "migration"
+      - "gradle"
+    allowed_commands:
+      - "./dev/scripts/wrapper.sh backend:test {project}"
+      - "./dev/scripts/wrapper.sh backend:run {project}"
+      - "./dev/scripts/wrapper.sh backend:start {project}"
+      - "./dev/scripts/wrapper.sh backend:stop"
+      - "./dev/scripts/exec.sh backend:exec {project} -- {command}"
+    validation:
+      - "./dev/scripts/wrapper.sh backend:test {project}"
+
+  frontend:
+    path: "workspace/frontend"
+    agent: "frontend"
+    runner: "node-runner"
+    task_markers:
+      - "frontend"
+      - "ui"
+      - "client"
+      - "javascript"
+      - "typescript"
+      - "react"
+      - "vue"
+      - "angular"
+      - "pnpm"
+    allowed_commands:
+      - "./dev/scripts/wrapper.sh frontend:install {project}"
+      - "./dev/scripts/wrapper.sh frontend:test {project}"
+      - "./dev/scripts/wrapper.sh frontend:build {project}"
+      - "./dev/scripts/wrapper.sh frontend:start {project}"
+      - "./dev/scripts/wrapper.sh frontend:stop"
+      - "./dev/scripts/wrapper.sh frontend:e2e {project}"
+      - "./dev/scripts/exec.sh frontend:exec {project} -- {command}"
+    validation:
+      - "./dev/scripts/wrapper.sh frontend:test {project}"
+      - "./dev/scripts/wrapper.sh frontend:build {project}"
+
+  infrastructure:
+    path: "workspace/infrastructure"
+    agent: "infrastructure"
+    runner: "opentofu-runner"
+    task_markers:
+      - "infrastructure"
+      - "iac"
+      - "opentofu"
+      - "terraform"
+      - "deployment"
+      - "environment"
+      - "secrets"
+    allowed_commands:
+      - "./dev/scripts/wrapper.sh infrastructure:validate {project}"
+      - "./dev/scripts/wrapper.sh infrastructure:plan {project}"
+      - "./dev/scripts/wrapper.sh infrastructure:apply {project}"
+      - "./dev/scripts/exec.sh infrastructure:exec {project} -- {command}"
+    validation:
+      - "./dev/scripts/wrapper.sh infrastructure:validate {project}"
+      - "./dev/scripts/wrapper.sh infrastructure:plan {project}"
+
+  e2e:
+    agent: "e2e"
+    runner: "playwright-runner"
+    task_markers:
+      - "e2e"
+      - "playwright"
+      - "end-to-end"
+      - "integration test"
+      - "user flow"
+    validation:
+      - "./dev/scripts/wrapper.sh backend:start {backend_project}"
+      - "./dev/scripts/wrapper.sh frontend:start {frontend_project}"
+      - "./dev/scripts/wrapper.sh frontend:e2e {frontend_project}"
+      - "./dev/scripts/wrapper.sh frontend:stop"
+      - "./dev/scripts/wrapper.sh backend:stop"
+
+  environment:
+    path: "."
+    agent: "environment"
+    runner: "opencode"
+    task_markers:
+      - "docker"
+      - "compose"
+      - "runner"
+      - "wrapper"
+      - "exec.sh"
+      - "opencode-environment"
+      - "development environment"
+    validation:
+      - "./dev/scripts/wrapper.sh stack:logs"
+      - "./dev/scripts/exec.sh compose:ps"
+
+policies:
+  require_wrapper_commands: true
+  forbid_direct_tooling: true
+  forbid_raw_docker_compose: true
+  require_acceptance_commands: true
+  require_agent_assignment: true
+  require_cross_repo_dependencies: true
+  mark_unknowns_as_unresolved: true
+  default_status: "needs-review"

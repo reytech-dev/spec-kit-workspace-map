@@ -1,0 +1,38 @@
+schema_version: "1.0"
+
+extension:
+  id: "workspace-map"
+  name: "Workspace Repository Map"
+  version: "0.1.0"
+  description: "Generate repo-map.md for multi-repo opencode workspaces"
+  author: "Reytech"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.1.0"
+  commands:
+    - "speckit.tasks"
+
+provides:
+  commands:
+    - name: "speckit.workspace-map.generate"
+      file: "commands/repo-map.md"
+      description: "Generate repo-map.md from spec, plan, tasks, and workspace policy"
+
+  config:
+    - name: "workspace-map-config.yml"
+      template: "workspace-map-config.template.yml"
+      description: "Workspace mapping configuration"
+      required: false
+
+hooks:
+  after_tasks:
+    command: "speckit.workspace-map.generate"
+    optional: true
+    prompt: "Generate repo-map.md for this feature?"
+
+tags:
+  - "workspace"
+  - "multi-repo"
+  - "opencode"
+  - "orchestration"
